@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>A little about us...</title>
+<link href="explorecalifornia/_css/main.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+	body{
+		
+		text-align : left;
+	}
+	#mainContent #rep-lookup {
+		font-family: georgia, serif;
+	}
+	
+	#rep-lookup div {
+		margin: 0 0 1em;
+	}
+	
+	#rep-lookup input[type=text] {
+		width: 8em;
+	}
+	
+	#rep-lookup-results {
+		color: #999;
+	}
+</style>
+</head>
+<body>
+<div id="wrapper">
+  
+  <div id="mainContent">
+    <h1 id="pageID">CONGRESS API lookup</h1>
+    <div id="mainArticle">
+		<h1>Advocacy</h1>
+		
+		<p>
+		We are very much in favor of <a href="http://www.govtrack.us/congress/bills/113/s39">Senate bill XYZABC</a>.  Please write a letter to your representatives asking for their support on this important bill.
+		</p>
+		
+		<h3>Who Are My Representatives?</h3>
+		
+		<p>
+		Fill in your address and we will look up the answer.  This requires JavaScript to work.  If you can't find them here, <a href="http://www.opencongress.org/people/senators" target="_blank">try OpenCongress</a>.
+		</p>
+		
+		<form action="" id="rep-lookup">
+			<div>
+			<label for="txt-zip">ZIP code:</label>
+			<input type="text" id="txt-zip" name="zip" required />
+			</div>
+			
+			<div>
+			<input type="submit" id="btn-lookup" value="Look up my reps" />
+			</div>
+		</form>
+		
+		<div id="rep-lookup-results">
+			<em>When senators are found, they will be displayed here.</em>
+		</div>
+    </div>
+    
+    
+    
+    </div>
+  
+
+    </div>
+  
+  <div id="footerBody">
+  
+</div>
+  </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../../explorecalifornia/jquery.min.js"><\/script>')</script>
+<script>
+'use strict';
+
+$(document).ready(function () {
+	$('#rep-lookup').submit(function(e){
+		e.preventDefault();
+		
+		var $results = $('#rep-lookup-results'),
+			zipcode = $('#txt-zip').val(),
+			apiKey = '34fa542de54243f685c7d81097d36e35';
+			
+		var requestURL = 'https://congress.api.sunlightfoundation.com//legislators/locate?callback=?';
+		
+		$.getJSON(requestURL, {
+			'apikey' : apiKey,
+			'zip' : zipcode,
+		}, function(data){
+			console.log(data);
+			if (data.results && data.results.length > 0){
+				var mySenators = '<p> Here are your senators </p>';
+				
+				$.each(data.results, function (i, rep){
+					if ( 'senate' === rep.chamber.toLowerCase()){
+						mySenators += '<p> + <a href ="' + rep.contact_form + ' target= "_blank">'
+						+ rep.first_name + ' ' + rep.last_name + '</a>' + '</p>';
+					}
+				});
+				
+				mySenators += '<p> Please write to them </p>';
+				
+				$results.html(mySenators);
+			}else {
+				$results.html('<p> No senators for the zip code ' + ' ' + zipcode + ' please try again </p>');
+			}
+		}); 
+			
+			
+	});
+});
+
+
+</script>
+</body>
+</html>
